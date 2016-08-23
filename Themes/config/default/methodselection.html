@@ -49,11 +49,9 @@
         </table>
     </div>
 
-    [<tag id="PaymentMethod" type="hidden" value="" />]
-    [<tag id="PaymentBank" type="hidden" value="" />]
-
-    [<tag id="PaymentBank1" type="textbox" value="" />]
-
+    [<tag id="paymentmethod" type="textbox" value="" cssclass="paymentmethod" />]
+    [<tag id="paymentbank" type="textbox" value="" cssclass="paymentbank" />]
+    
     <!-- commandname must be "pay" and the commandargument must be the provider control key -->
     [<tag id='DnnCMolliebutton' type='button' cssclass="paybutton" resourcekey="Payment.payment" commandname='pay' commandargument='molliepayment' />]
 
@@ -64,8 +62,8 @@
     jQuery(document).ready(function () {
 
         $(".rdoBanks").change(function () {
-            $('#PaymentBank1').val = $("input[.rdoBanks]:checked").val();
-            alert($("input[.rdoBanks]:checked").val());
+            $('.paymentmethod').val($("input[.rdoBanks]:checked").val());
+            $('.paymentbank').val($("#mollieidealgatewaybankselectordropdown").val());
         });
 
     });
