@@ -25,7 +25,7 @@ namespace DnnC.Mollie
         public override string GetTemplate(NBrightInfo cartInfo)
         {
             var info = ProviderUtils.GetProviderSettings("DnnCMolliepayment");
-            var templ = ProviderUtils.GetTemplateData(info.GetXmlProperty("genxml/textbox/checkouttemplate"), info);
+            var templ = ProviderUtils.GetTemplateMollieData(info.GetXmlProperty("genxml/textbox/checkouttemplate"), info);
 
             return templ;
         }

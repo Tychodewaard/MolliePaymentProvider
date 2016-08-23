@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,19 +20,13 @@ namespace DnnC.Mollie
     {
 
 
-        public static String GetTemplateData(String templatename, NBrightInfo pluginInfo)
+        public static String GetTemplateMollieData(String templatename, NBrightInfo pluginInfo)
         {
-            var controlMapPath = HttpContext.Current.Server.MapPath("/DesktopModules/NBright/DnnCMollie");
-            var templCtrl = new NBrightCore.TemplateEngine.TemplateGetter(PortalSettings.Current.HomeDirectoryMapPath, controlMapPath, "Themes\\config", "");
-            var templ = templCtrl.GetTemplateData(templatename, Utils.GetCurrentCulture());
-            templ = Utils.ReplaceSettingTokens(templ, pluginInfo.ToDictionary());
-            templ = Utils.ReplaceUrlTokens(templ);
+            var templ = GetTemplateMollieData(templatename, pluginInfo);
 
-            //****************
+            #region "Get Mollie options from API"
 
             var info = ProviderUtils.GetProviderSettings("DnnCMolliepayment");
-
-            
 
             var testMode = info.GetXmlPropertyBool("genxml/checkbox/testmode");
             var testApiKey = info.GetXmlProperty("genxml/textbox/testapikey");
@@ -39,11 +34,10 @@ namespace DnnC.Mollie
 
 
             // Check to see if the test api keys is filled in, stops the error with the settings in the backoffice
-            if (testApiKey != "") { 
+            if (testApiKey != "")
+            {
 
                 var apiKey = testApiKey;
-
-
 
                 if (!testMode)
                 {
@@ -84,7 +78,19 @@ namespace DnnC.Mollie
                 }
                 templ = templ.Replace("[PAYMENTMETHODS]", strPayOptions);
             }
-            //****************
+            #endregion
+
+            return templ;
+        }
+
+        public static String GetTemplateData(String templatename, NBrightInfo pluginInfo)
+        {
+            var controlMapPath = HttpContext.Current.Server.MapPath("/DesktopModules/NBright/DnnCMollie");
+            var templCtrl = new NBrightCore.TemplateEngine.TemplateGetter(PortalSettings.Current.HomeDirectoryMapPath, controlMapPath, "Themes\\config", "");
+            var templ = templCtrl.GetTemplateData(templatename, Utils.GetCurrentCulture());
+            templ = Utils.ReplaceSettingTokens(templ, pluginInfo.ToDictionary());
+            templ = Utils.ReplaceUrlTokens(templ);
+
             return templ;
         }
 
