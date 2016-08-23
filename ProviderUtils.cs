@@ -22,7 +22,7 @@ namespace DnnC.Mollie
 
         public static String GetTemplateMollieData(String templatename, NBrightInfo pluginInfo)
         {
-            var templ = GetTemplateMollieData(templatename, pluginInfo);
+            var templ = GetTemplateData(templatename, pluginInfo);
 
             #region "Get Mollie options from API"
 
