@@ -1,0 +1,72 @@
+[<tag id="resourcepath" type="meta" value="/DesktopModules/NBright/DnnCMollie/App_LocalResources" />]
+<style>
+    /* Default buttons */
+    .paybutton {
+        background: #1AA8E3;
+        color: #FFFFFF;
+    }
+
+        .paybutton:hover {
+            background: #23BAF5;
+            color: #FFFFFF;
+        }
+
+    .paybutton {
+        display: inline-block;
+        font-weight: bold;
+        line-height: 35px;
+        padding: 0 10px;
+        margin: 10px 10px 10px 0;
+        text-align: center;
+        width: 45%;
+        border: medium none;
+        text-decoration: none;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+        .paybutton:hover {
+            text-decoration: none;
+        }
+
+    .paymentTable td {
+        padding: 0 10px 0 10px;
+    }
+</style>
+
+<div>
+
+    <!--<img src="/DesktopModules/NBright/DnnCMollie/Themes/config/img/cic.jpg"/>
+    <!--<div class="defaultmessage">[<tag type="valueof" resourcekey="Payment.message" />]</div>
+    <div class="clearfix"></div>-->
+
+
+
+
+    <div>
+        <table class="paymentTable">
+            [PAYMENTMETHODS]
+        </table>
+    </div>
+
+    [<tag id="PaymentMethod" type="hidden" value="" />]
+    [<tag id="PaymentBank" type="hidden" value="" />]
+
+    [<tag id="PaymentBank1" type="textbox" value="" />]
+
+    <!-- commandname must be "pay" and the commandargument must be the provider control key -->
+    [<tag id='DnnCMolliebutton' type='button' cssclass="paybutton" resourcekey="Payment.payment" commandname='pay' commandargument='molliepayment' />]
+
+</div>
+
+
+<script type='text/javascript'>
+    jQuery(document).ready(function () {
+
+        $(".rdoBanks").change(function () {
+            $('#PaymentBank1').val = $("input[.rdoBanks]:checked").val();
+            alert($("input[.rdoBanks]:checked").val());
+        });
+
+    });
+</script>
