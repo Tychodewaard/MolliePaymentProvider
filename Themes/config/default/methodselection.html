@@ -1,68 +1,141 @@
 [<tag id="resourcepath" type="meta" value="/DesktopModules/NBright/DnnCMollie/App_LocalResources" />]
 <style>
-    /* Default buttons */
     .paybutton {
         background: #1AA8E3;
         color: #FFFFFF;
-    }
-
-        .paybutton:hover {
-            background: #23BAF5;
-            color: #FFFFFF;
-        }
-
-    .paybutton {
         display: inline-block;
         font-weight: bold;
-        line-height: 35px;
-        padding: 0 10px;
-        margin: 10px 10px 10px 0;
+        line-height: 60px;
         text-align: center;
-        width: 45%;
+        width: 100%;       
         border: medium none;
         text-decoration: none;
         box-sizing: border-box;
         cursor: pointer;
     }
+    .paybutton:hover {
+        text-decoration: none;
+        background: #23BAF5;
+        color: #FFFFFF;
+    }
+    .paymentTable {
+        width:100%;
+    }
 
-        .paybutton:hover {
-            text-decoration: none;
+    #bank-holder {
+        position: relative;
+        width: 100%;
+        background: #efefef;
+        border: 1px solid #efefef;
+        padding: 10px;
+        margin: 10px 0 -15px 0;
+    }
+    #bank-holder:after {
+        content: "";
+        display: block;
+        border: 8px solid #efefef;
+        border-right-color: transparent;
+        border-left-color: transparent;
+        border-top-color: transparent;
+        position: absolute;
+        top: -4px;
+        left: 0;
+        margin: -1em 0 0 3.3em;
+}
+    .bankSelector {
+        padding: 5px 8px;
+        width: 100%;
+        border: solid 1px #ccc;
+    }
+
+    .hidden {
+        display:none;
+    }
+    .leftPanel {
+        float:left;
+        width:60%;
+    }
+    .rightPanel {
+        float:right;
+        width:39%;
+    }
+
+    @media (max-width: 992px) {
+        .leftPanel {
+            float:none;
+            width:100%;
         }
-
-    .paymentTable td {
-        padding: 0 10px 0 10px;
+        .rightPanel {
+            float:none;
+            width:100%;
+        }
     }
 </style>
 
 <div>
-
-    <!--<img src="/DesktopModules/NBright/DnnCMollie/Themes/config/img/cic.jpg"/>
-    <!--<div class="defaultmessage">[<tag type="valueof" resourcekey="Payment.message" />]</div>
-    <div class="clearfix"></div>-->
-
-
-
+    <div class="defaultmessage">[<tag type="valueof" resourcekey="Payment.cartmessage" />]</div>
+    <div class="clearfix"></div>    
 
     <div>
-        <table class="paymentTable">
-            [PAYMENTMETHODS]
-        </table>
-    </div>
 
-    [<tag id="paymentmethod" type="textbox" value="" cssclass="paymentmethod" />]
-    [<tag id="paymentbank" type="textbox" value="" cssclass="paymentbank" />]
+        <!-- Payment Div holder -->
+        <div class="leftPanel">
+            <table class="paymentTable">
+                [PAYMENTMETHODS]
+            </table>
+        </div><!-- Payment Div holder -->
+
+        <!-- Payment button holder -->
+        <div class="rightPanel">
+            <!-- commandname must be "pay" and the commandargument must be the provider control key -->
+            [<tag id='DnnCMolliebutton' type='button' cssclass="paybutton hidden" resourcekey="Payment.Continue" commandname='pay' commandargument='molliepayment' />]
+        </div><!-- Payment button holder -->
+
+    </div>
+    <div class="clearfix"></div>
     
-    <!-- commandname must be "pay" and the commandargument must be the provider control key -->
-    [<tag id='DnnCMolliebutton' type='button' cssclass="paybutton" resourcekey="Payment.payment" commandname='pay' commandargument='molliepayment' />]
+    [<tag id="paymentmethod" type="textbox" value="" cssclass="paymentmethod hidden" />]
+    [<tag id="paymentbank" type="textbox" value="" cssclass="paymentbank hidden" />]
+
+    
 
 </div>
-
 
 <script type='text/javascript'>
     jQuery(document).ready(function () {
 
+        // Check for a payment method change
         $(".rdoBanks").change(function () {
             $('.paymentmethod').val($("input[.rdoBanks]:checked").val());
+
+            // Check to see if the user has chosen a payment method
+            if ($('.paymentmethod').val() != '') {
+
+                if ($('.paymentmethod').val() != 'ideal') {
+                    $('.paybutton').removeClass("paybutton hidden").addClass("paybutton");
+                    $('#bank-holder').addClass("hidden");
+                    $('.paymentbank').val('');
+                } else {
+                    $('.paybutton').removeClass("paybutton hidden").addClass("paybutton hidden");
+                    $('#bank-holder').removeClass("hidden");
+                    $("#mollieidealgatewaybankselectordropdown").val('');
+                    $('.paymentbank').val('');
+                }
+            }
+
+            jQuery('#mollieidealgatewaybankselectordropdown').change(function () {
+                var sel = jQuery('#mollieidealgatewaybankselectordropdown option:selected:first');
+                if (sel.text() != '') {
+                    $('.paybutton').removeClass("paybutton hidden").addClass("paybutton");
+                } else {
+                    $('#bank-holder').addClass("hidden");
+                }
+            });
+
+        });
+
+        // Check for an iDeal bank change
+        $('#mollieidealgatewaybankselectordropdown').change(function () {
             $('.paymentbank').val($("#mollieidealgatewaybankselectordropdown").val());
         });
 

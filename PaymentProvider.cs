@@ -32,58 +32,45 @@ namespace DnnC.Mollie
 
         public override string RedirectForPayment(OrderData orderData)
         {
-
             var appliedtotal = orderData.PurchaseInfo.GetXmlPropertyDouble("genxml/appliedsubtotal");
             var alreadypaid = orderData.PurchaseInfo.GetXmlPropertyDouble("genxml/alreadypaid");
-
             var info = ProviderUtils.GetProviderSettings("DnnCMolliepayment");
-
             var cartDesc = info.GetXmlProperty("genxml/textbox/cartdescription");
             var testMode = info.GetXmlPropertyBool("genxml/checkbox/testmode");
             var testApiKey = info.GetXmlProperty("genxml/textbox/testapikey");
             var liveApiKey = info.GetXmlProperty("genxml/textbox/liveapikey");
             var notifyUrl = Utils.ToAbsoluteUrl("/DesktopModules/NBright/DnnCMollie/notify.ashx");
+                                                
             var returnUrl = Globals.NavigateURL(StoreSettings.Current.PaymentTabId, "");
             var ItemId = orderData.PurchaseInfo.ItemID.ToString("");
 
-
-            //File.WriteAllText(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_DnnCMolliepost.html", rtnStr);
-            //var chkIdeal = 
-
+            var nbi = new NBrightInfo();
+            nbi.XMLData = orderData.payselectionXml;
+            var paymentMethod = nbi.GetXmlProperty("genxml/textbox/paymentmethod");
+            var paymentBank = nbi.GetXmlProperty("genxml/textbox/paymentbank");
             var apiKey = testApiKey;
-
-            var errText = apiKey + "||<br/>" + cartDesc + "||<br/>" + testMode + "||<br/>" + testApiKey + "||<br/>" + liveApiKey + "||<br/>WebHook : " + notifyUrl + "||<br/> ReturnUrl : " + returnUrl + "||<br/>ItemId : " + ItemId + "||<br/>";
-            File.WriteAllText(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_DnnCErrors.html", errText);
 
             if (!testMode)
             {
                 apiKey = liveApiKey;
             }
 
+
             MollieClient mollieClient = new MollieClient();
             mollieClient.setApiKey(apiKey);
 
-            Payment payment = new Payment
+            Payment payment = new Payment()
             {
                 amount = decimal.Parse((appliedtotal - alreadypaid).ToString("0.00", CultureInfo.InvariantCulture)), //99.99M,
                 description = cartDesc,
-                redirectUrl = returnUrl,
-                method = Method.mistercash,
-                metadata = "OrderId = " + ItemId,
-                //webhookUrl = notifyUrl,
-
+                redirectUrl = returnUrl + "/orderid/" + ItemId,
+                method = (Method)Enum.Parse(typeof(Method), paymentMethod, true),
+                issuer = paymentBank,
+                metadata = ItemId,
+                webhookUrl = notifyUrl,
             };
+            
             PaymentStatus paymentStatus = mollieClient.StartPayment(payment);
-
-
-            //File.WriteAllText(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_DnnCMolliepost1.html", paymentStatus.links.paymentUrl);
-            //
-            //ReturnUrl = Globals.NavigateURL(StoreSettings.Current.PaymentTabId, "", param);
-            //"orderid=" + oInfo.PurchaseInfo.ItemID.ToString("");
-
-
-
-
 
             orderData.OrderStatus = "020";
             orderData.PurchaseInfo.SetXmlProperty("genxml/paymenterror", "");
@@ -117,6 +104,7 @@ namespace DnnC.Mollie
 
             return "";
         }
+
 
         public override string ProcessPaymentReturn(HttpContext context)
         {

@@ -38,26 +38,53 @@
                         <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.cartDescription" />]</label>
                         <div class="col-sm-6">[<tag id="cartdescription" cssclass="form-control" type="textbox" Text="" />]</div>
                     </div><!-- ./End : Cart description -->
+
+                    <!-- Start : Cart Message -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.cartMessage" />]</label>
+                        <div class="col-sm-6">[<tag id="DefaultMessage" cssclass="form-control" resourcekeysave="Payment.message" type="textbox" Text="" />]</div>
+                    </div><!-- ./End : Cart Message -->
+
+                    <!-- Start : Pay button text -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.buttontext" />]</label>
+                        <div class="col-sm-6">
+                            [<tag id="buybuttontext" cssclass="form-control" type="textbox" maxlength="150" Text="" />]
+                        </div>
+                    </div><!-- ./End : Pay button text -->
+
+                    <!-- Start : Bank dropdown text -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.bankdropdowntext" />]</label>
+                        <div class="col-sm-6">[<tag id="bankdropdowntext" cssclass="form-control" type="textbox" Text="" />]</div>
+                    </div><!-- ./End : Bank dropdown text -->
+
+                    <hr />
+
                     <!-- Start : checkout template -->
                     <div class="form-group">
                         <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.checkouttemplate" />]</label>
                         <div class="col-sm-6">[<tag id="checkouttemplate" cssclass="form-control" type="textbox" Text="methodselection.html" />]</div>
                     </div><!-- ./End : checkout template -->
+
                     <!-- Start : Mollie TEST Api key -->
                     <div class="form-group">
                         <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.testApiKey" />]</label>
                         <div class="col-sm-6">[<tag id="testapikey" cssclass="form-control" type="textbox" Text="" />]</div>
                     </div><!-- ./ : Mollie TEST Api key -->
+
                     <!-- Start : Mollie LIVE Api key -->
                     <div class="form-group">
                         <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.liveApiKey" />]</label>
                         <div class="col-sm-6">[<tag id="liveapikey" cssclass="form-control" type="textbox" Text="" />]</div>
                     </div><!-- ./ : Mollie LIVE Api key -->
+
                     <!-- Start : Test mode -->
                     <div class="form-group">
                         <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.testMode" />]</label>
                         <div class="col-sm-6">[<tag id="testmode" type="checkbox" />]</div>
                     </div><!-- ./End : Test mode -->
+
                     <!-- Start : Verify Url -->
                     <div class="form-group">
                         <label class="col-sm-3 control-label">[<tag type="valueof" resourcekey="Payment.verifyURL" />]</label>
@@ -65,6 +92,10 @@
                             [<tag id="verifyURL" cssclass="form-control" type="textbox" Text="({yourdomain}/DesktopModules/NBright/NBrightPayPal/notify.ashx)" />]
                         </div>
                     </div><!-- ./End : Verify Url -->
+
+
+                    <hr />
+
                     <!-- Start : Debug mode -->
                     <div class="form-group">
                         <label class="col-sm-3 control-label">[<tag type='valueof' resourcekey='General.DebugMode' />]</label>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,7 +17,6 @@ namespace DnnC.Mollie
 {
     public class ProviderUtils
     {
-
 
         public static String GetTemplateMollieData(String templatename, NBrightInfo pluginInfo)
         {
@@ -58,23 +56,23 @@ namespace DnnC.Mollie
                     strPayOptions += "<td><img src='" + method.image.normal + "' /></td>";
                     strPayOptions += "<td><strong>" + method.description + "</strong></td>";
 
-                    strPayOptions += "<td>";
+                    strPayOptions += "</tr>";
                     if (method.id == "ideal")
                     {
 
-                        strPayOptions += "<select id='mollieidealgatewaybankselectordropdown' name='mollieidealgatewaybankselectordropdown'>";
+                        strPayOptions += "<tr><td colspan='3'><div id='bank-holder' class='hidden'>";
+                        strPayOptions += "<select id='mollieidealgatewaybankselectordropdown' name='mollieidealgatewaybankselectordropdown' class='bankSelector'>";
+                        strPayOptions += "<option>" + info.GetXmlProperty("genxml/textbox/bankdropdowntext") + "</option>";
                         foreach (Issuer issuer in issuers.data)
                         {
                             strPayOptions += string.Format("<option value=\"{0}\">{1}</option>", issuer.id, issuer.name);
                         }
                         strPayOptions += "</select>";
-
+                        strPayOptions += "</div></td></tr>";
                     }
-                    strPayOptions += "</td>";
 
 
-                    strPayOptions += "</tr>";
-                    strPayOptions += "<tr><td colspan='4'><hr/></td></tr>";
+                    strPayOptions += "<tr><td colspan='3'><hr/></td></tr>";
                 }
                 templ = templ.Replace("[PAYMENTMETHODS]", strPayOptions);
             }
@@ -82,7 +80,7 @@ namespace DnnC.Mollie
 
             return templ;
         }
-
+        
         public static String GetTemplateData(String templatename, NBrightInfo pluginInfo)
         {
             var controlMapPath = HttpContext.Current.Server.MapPath("/DesktopModules/NBright/DnnCMollie");
@@ -93,6 +91,7 @@ namespace DnnC.Mollie
 
             return templ;
         }
+
 
         public static NBrightInfo GetProviderSettings(String ctrlkey)
         {
@@ -120,18 +119,10 @@ namespace DnnC.Mollie
 
         public static String GetBankRemotePost(OrderData orderData)
         {
-
-
             var rPost = new RemotePost();
-
             var settings = ProviderUtils.GetProviderSettings("DnnCMolliepayment");
-
             var payData = new PayData(orderData);
-
             rPost.Url = orderData.PurchaseInfo.GetXmlProperty("genxml/posturl");
-            //File.WriteAllText(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_DnnCMolliepost2.html", rPost.Url);
-            //rPost.Add("param", "param");
-
 
             //Build the re-direct html 
             var rtnStr = rPost.GetPostHtml("/DesktopModules/NBright/DnnCMollie/Themes/config/img/cic.jpg");

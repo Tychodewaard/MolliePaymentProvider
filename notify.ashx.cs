@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Web;
 using Nevoweb.DNN.NBrightBuy.Components;
+using NBrightDNN;
+using DnnC.Mollie.Api;
+using System.IO;
+using DotNetNuke.Entities.Portals;
+using NBrightCore.common;
 
 namespace DnnC.Mollie
 {
@@ -42,86 +47,86 @@ namespace DnnC.Mollie
                 // ------------------------------------------------------------------------
                 // In this case the payment provider passes back data via form POST.
                 // Get the data we need.
-                string returnmessage = "";
-                int DnnCMollieStoreOrderID = 0;
-                string DnnCMollieCartID = "";
-                string DnnCMollieClientLang = "";
+                //string returnmessage = "";
+                //int DnnCMollieStoreOrderID = 0;
+                //string DnnCMollieCartID = "";
+                //string DnnCMollieClientLang = "";
 
-                if ((context.Request.Form.Get("returnmessage") != null))
+
+
+                var testMode = info.GetXmlPropertyBool("genxml/checkbox/testmode");
+                var testApiKey = info.GetXmlProperty("genxml/textbox/testapikey");
+                var liveApiKey = info.GetXmlProperty("genxml/textbox/liveapikey");
+
+                var nbi = new NBrightInfo();
+                var paymentMethod = nbi.GetXmlProperty("genxml/textbox/paymentmethod");
+                var paymentBank = nbi.GetXmlProperty("genxml/textbox/paymentbank");
+                var apiKey = testApiKey;
+
+                if (!testMode)
                 {
-                    returnmessage = context.Request.Form.Get("returnmessage");
+                    apiKey = liveApiKey;
+                }
 
-                    if (!string.IsNullOrEmpty(returnmessage))
+                string molliePaymentId = context.Request.Form["id"];
+                int oId = -1;
+
+                int.TryParse(context.Request.Form["orderid"], out oId);
+                if (oId <= 0)
+                {
+                    int.TryParse(context.Request.Form["ordid"], out oId);
+                }
+
+                MollieClient mollieClient = new MollieClient();
+                mollieClient.setApiKey(apiKey);
+                PaymentStatus paymentStatus = mollieClient.GetStatus(molliePaymentId);
+
+                var orderid = paymentStatus.metadata;
+                var nbInfo = modCtrl.Get(Convert.ToInt32(orderid), "ORDER");
+                if (nbi != null)
+                {
+                    var orderData = new OrderData(nbInfo.ItemID);
+
+                    switch (paymentStatus.status.Value)
                     {
-                        string[] strData = returnmessage.Split(';');
-                        DnnCMollieStoreOrderID = Convert.ToInt32(strData[0]);
-                        DnnCMollieCartID = strData[1];
-                        DnnCMollieClientLang = strData[2];
-                        // ------------------------------------------------------------------------
-
-                        debugMsg += "OrderId: " + DnnCMollieStoreOrderID + " </br>";
-                        if (debugMode)
-                        {
-                            info.SetXmlProperty("genxml/debugmsg", debugMsg);
-                            modCtrl.Update(info);
-                        }
-
-                        var orderData = new OrderData(DnnCMollieStoreOrderID);
-
-                        string DnnCMollieStatusCode = ProviderUtils.getStatusCode(orderData, context.Request);
-
-                        if (DnnCMollieStatusCode == "02")
-                            rtnMsg = "version=2" + Environment.NewLine + "cdr=1";
-                        else
-                            rtnMsg = "version=2" + Environment.NewLine + "cdr=0";
-
-                        debugMsg += "DnnCMollieStatusCode: " + DnnCMollieStatusCode + " </br>";
-                        if (debugMode)
-                        {
-                            info.SetXmlProperty("genxml/debugmsg", debugMsg);
-                            modCtrl.Update(info);
-                        }
-
-                        // Status return "00" is payment successful
-                        if (DnnCMollieStatusCode == "00")
-                        {
-                            //set order status to Payed
+                        case Status.paid:
                             orderData.PaymentOk();
-                        }
-                        else
-                        {
+                            break;
+                        case Status.cancelled:
+                            //set order status to Cancelled
+                            orderData.PaymentOk("030");
+                            break;
+                        case Status.failed:
+                            //set order status to payment failed
                             orderData.PaymentFail();
-                        }
+                            break;
+                        case Status.open:
+                            //set order status to Waiting for payment
+                            orderData.PaymentOk("060");
+                            break;
+                        case Status.pending:
+                            //set order status to Waiting for payment
+                            orderData.PaymentOk("060");
+                            break;
+                        case Status.expired:
+                            //set order status to Incomplete
+                            orderData.PaymentOk("010");
+                            break;
                     }
 
-                }
-                if (debugMode)
-                {
-                    debugMsg += "Return Message: " + rtnMsg;
-                    info.SetXmlProperty("genxml/debugmsg", debugMsg);
-                    modCtrl.Update(info);
-                }
+                    var rtnStr = paymentStatus.status.Value + "<br/> id = " + molliePaymentId;
+                    rtnStr += "<br/> orderId = " + orderid;
+                    rtnStr += "<br/> status = " + orderData.OrderStatus;
 
+                    File.WriteAllText(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_DnnC_IPN_return.html", rtnStr.ToString());
 
-                HttpContext.Current.Response.Clear();
-                HttpContext.Current.Response.Write(rtnMsg);
-                HttpContext.Current.Response.ContentType = "text/plain";
-                HttpContext.Current.Response.CacheControl = "no-cache";
-                HttpContext.Current.Response.Expires = -1;
-                HttpContext.Current.Response.End();
+                }
 
             }
-            catch (Exception ex)
-            {
-                if (!ex.ToString().StartsWith("System.Threading.ThreadAbortException"))  // we expect a thread abort from the End response.
-                {
-                    info.SetXmlProperty("genxml/debugmsg", "DnnCMollie ERROR: " + ex.ToString());
-                    modCtrl.Update(info);
-                }
-            }
+            catch { }                   
 
 
-        }
+        } //end
 
         public bool IsReusable
         {

@@ -38,17 +38,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\bin\DnnC.Mollie.Api.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke">
-      <HintPath>..\..\..\..\nbsdev\bin\DotNetNuke.dll</HintPath>
+    <Reference Include="DotNetNuke, Version=8.0.1.236, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\bin\DotNetNuke.dll</HintPath>
     </Reference>
-    <Reference Include="NBrightBuy">
-      <HintPath>..\..\..\..\nbsdev\bin\NBrightBuy.dll</HintPath>
+    <Reference Include="NBrightBuy, Version=3.5.0.36, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\bin\NBrightBuy.dll</HintPath>
     </Reference>
-    <Reference Include="NBrightCore">
-      <HintPath>..\..\..\..\nbsdev\bin\NBrightCore.dll</HintPath>
+    <Reference Include="NBrightCore, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\bin\NBrightCore.dll</HintPath>
     </Reference>
-    <Reference Include="NBrightDNN">
-      <HintPath>..\..\..\..\nbsdev\bin\NBrightDNN.dll</HintPath>
+    <Reference Include="NBrightDNN, Version=8.0.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\bin\NBrightDNN.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

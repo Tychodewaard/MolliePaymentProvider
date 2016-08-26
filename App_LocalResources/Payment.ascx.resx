@@ -117,31 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="bankdropdowntext.Text" xml:space="preserve">
+    <value>Bank dropdown text option :</value>
+  </data>
+  <data name="buttontext.Text" xml:space="preserve">
+    <value>Payment button text :</value>
+  </data>
   <data name="cartDescription.Text" xml:space="preserve">
-    <value>Cart description</value>
+    <value>Cart description :</value>
+  </data>
+  <data name="cartMessage.Text" xml:space="preserve">
+    <value>Cart message :</value>
   </data>
   <data name="checkouttemplate.Text" xml:space="preserve">
-    <value>CheckOut Template</value>
+    <value>Checkout Template</value>
+  </data>
+  <data name="Continue.Text" xml:space="preserve">
+    <value>Pay now</value>
   </data>
   <data name="debugmode.Text" xml:space="preserve">
-    <value>Debug Mode</value>
+    <value>Debug Mode :</value>
   </data>
   <data name="liveApiKey.Text" xml:space="preserve">
-    <value>Mollie Live Api key</value>
+    <value>Mollie Live Api key :</value>
   </data>
   <data name="message.Text" xml:space="preserve">
-    <value>Pay by using DnnCMollie Secure Banking Payment Gateway</value>
+    <value>Choose your prefered payment method:</value>
   </data>
   <data name="payment.Text" xml:space="preserve">
     <value>Pay Now</value>
   </data>
   <data name="testApiKey.Text" xml:space="preserve">
-    <value>Mollie Test Api key</value>
+    <value>Mollie Test Api key :</value>
   </data>
   <data name="testMode.Text" xml:space="preserve">
-    <value>Test Mode</value>
+    <value>Test Mode :</value>
   </data>
   <data name="verifyURL.Text" xml:space="preserve">
-    <value>Verify Url</value>
+    <value>Verify Url :</value>
   </data>
 </root>
