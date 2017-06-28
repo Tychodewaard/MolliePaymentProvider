@@ -117,19 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="bankdropdowntext.Text" xml:space="preserve">
-    <value>Bank dropdown text option :</value>
-  </data>
-  <data name="buttontext.Text" xml:space="preserve">
-    <value>Payment button text :</value>
-  </data>
-  <data name="cartDescription.Text" xml:space="preserve">
+  <data name="settingsCartDescription.Text" xml:space="preserve">
     <value>Cart description :</value>
   </data>
-  <data name="cartMessage.Text" xml:space="preserve">
-    <value>Cart message :</value>
-  </data>
-  <data name="checkouttemplate.Text" xml:space="preserve">
+  <data name="settingsCheckouttemplate.Text" xml:space="preserve">
     <value>Checkout Template</value>
   </data>
   <data name="Continue.Text" xml:space="preserve">
@@ -138,22 +129,22 @@
   <data name="debugmode.Text" xml:space="preserve">
     <value>Debug Mode :</value>
   </data>
-  <data name="liveApiKey.Text" xml:space="preserve">
+  <data name="settingsLiveApiKey.Text" xml:space="preserve">
     <value>Mollie Live Api key :</value>
   </data>
   <data name="message.Text" xml:space="preserve">
     <value>Choose your prefered payment method:</value>
   </data>
-  <data name="payment.Text" xml:space="preserve">
-    <value>Pay Now</value>
-  </data>
-  <data name="testApiKey.Text" xml:space="preserve">
+  <data name="settingsTestApiKey.Text" xml:space="preserve">
     <value>Mollie Test Api key :</value>
   </data>
-  <data name="testMode.Text" xml:space="preserve">
+  <data name="settingsTestMode.Text" xml:space="preserve">
     <value>Test Mode :</value>
   </data>
-  <data name="verifyURL.Text" xml:space="preserve">
-    <value>Verify Url :</value>
+  <data name="cartmessage.Text" xml:space="preserve">
+    <value>Choose your prefered payment method:</value>
+  </data>
+  <data name="settingsBankdropdowntext.Text" xml:space="preserve">
+    <value>Bank dropdown text option :</value>
   </data>
 </root>

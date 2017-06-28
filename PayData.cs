@@ -25,14 +25,9 @@ namespace DnnC.Mollie
             var appliedtotal = oInfo.PurchaseInfo.GetXmlPropertyDouble("genxml/appliedtotal");
             var alreadypaid = oInfo.PurchaseInfo.GetXmlPropertyDouble("genxml/alreadypaid");
 
-            var PostUrl = oInfo.PurchaseInfo.GetXmlPropertyDouble("genxml/posturl");
-
             var orderTotal = (appliedtotal - alreadypaid).ToString("0.00");
 
         }
-
-        public string PostUrl { get; set; }
-
 
     }
 

@@ -1,4 +1,7 @@
-﻿namespace DnnC.Mollie
+﻿using DotNetNuke.Entities.Portals;
+using System.IO;
+
+namespace DnnC.Mollie
 {
     public class RemotePost
     {
@@ -34,6 +37,9 @@
             sipsHtml += "</table>";
 
             sipsHtml += "</body></html>";
+
+            //var rtnStr1 = "paymentUrl : " + paymentStatus.links.paymentUrl + " || paymentMethod : " + paymentMethod;
+            File.WriteAllText(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_DnnCRemotePost.html", sipsHtml.ToString());
 
             return sipsHtml;
 

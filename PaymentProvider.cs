@@ -14,12 +14,13 @@ using Nevoweb.DNN.NBrightBuy.Components;
 using DnnC.Mollie.Api;
 using System.IO;
 using System.Globalization;
-
+using System.Net;
 
 namespace DnnC.Mollie
 {
     public class DnnCMolliePaymentProvider : Nevoweb.DNN.NBrightBuy.Components.Interfaces.PaymentsInterface
     {
+
         public override string Paymentskey { get; set; }
 
         public override string GetTemplate(NBrightInfo cartInfo)
@@ -32,8 +33,9 @@ namespace DnnC.Mollie
 
         public override string RedirectForPayment(OrderData orderData)
         {
-            var appliedtotal = orderData.PurchaseInfo.GetXmlPropertyDouble("genxml/appliedsubtotal");
+            var appliedtotal = orderData.PurchaseInfo.GetXmlPropertyDouble("genxml/appliedtotal");
             var alreadypaid = orderData.PurchaseInfo.GetXmlPropertyDouble("genxml/alreadypaid");
+
             var info = ProviderUtils.GetProviderSettings("DnnCMolliepayment");
             var cartDesc = info.GetXmlProperty("genxml/textbox/cartdescription");
             var testMode = info.GetXmlPropertyBool("genxml/checkbox/testmode");
@@ -55,32 +57,32 @@ namespace DnnC.Mollie
                 apiKey = liveApiKey;
             }
 
-
             MollieClient mollieClient = new MollieClient();
             mollieClient.setApiKey(apiKey);
 
             Payment payment = new Payment()
             {
-                amount = decimal.Parse((appliedtotal - alreadypaid).ToString("0.00", CultureInfo.InvariantCulture)), //99.99M,
+                //amount = decimal.Parse((appliedtotal - alreadypaid).ToString("0.00", CultureInfo.InvariantCulture)),
+                amount = decimal.Parse((appliedtotal - alreadypaid).ToString("0.00")),
                 description = cartDesc,
                 redirectUrl = returnUrl + "/orderid/" + ItemId,
                 method = (Method)Enum.Parse(typeof(Method), paymentMethod, true),
                 issuer = paymentBank,
                 metadata = ItemId,
-                webhookUrl = notifyUrl,
+                webhookUrl = notifyUrl,// + "/orderid/" + ItemId,
             };
-            
+
             PaymentStatus paymentStatus = mollieClient.StartPayment(payment);
 
             orderData.OrderStatus = "020";
             orderData.PurchaseInfo.SetXmlProperty("genxml/paymenterror", "");
-            orderData.PurchaseInfo.SetXmlProperty("genxml/posturl", paymentStatus.links.paymentUrl);
+            orderData.PurchaseInfo.SetXmlProperty("genxml/posturl", paymentStatus.links.paymentUrl.Trim());
             orderData.PurchaseInfo.Lang = Utils.GetCurrentCulture();
             orderData.SavePurchaseData();
             try
             {
                 HttpContext.Current.Response.Clear();
-                HttpContext.Current.Response.Write(ProviderUtils.GetBankRemotePost(orderData));
+                HttpContext.Current.Response.Redirect(paymentStatus.links.paymentUrl);
             }
             catch (Exception ex)
             {
@@ -104,28 +106,66 @@ namespace DnnC.Mollie
 
             return "";
         }
-
-
+        
         public override string ProcessPaymentReturn(HttpContext context)
         {
+
             var orderid = Utils.RequestQueryStringParam(context, "orderid");
             if (Utils.IsNumeric(orderid))
             {
-                var status = Utils.RequestQueryStringParam(context, "status");
-                if (status == "0")
+                var orderData = new OrderData(Convert.ToInt32(orderid));
+
+
+                // Test bebugging for dev porposes
+                var rtnStr = "Order stats when returned = " + orderData.OrderStatus;
+                rtnStr += "<br/> orderId from ipn = " + orderid;
+                rtnStr += "<br/> orderId from ipn = " + orderData.OrderNumber;
+                rtnStr += "<br/> status or order after ipn = " + orderData.OrderStatus;
+                File.WriteAllText(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_DnnC_Bank_return.html", rtnStr.ToString());
+
+                if (orderData.OrderStatus == "010") // check we have a waiting for bank status (Cancel from bank seems to happen even after notified has accepted it as valid??)
                 {
-                    var orderData = new OrderData(Convert.ToInt32(orderid));
                     var rtnerr = orderData.PurchaseInfo.GetXmlProperty("genxml/paymenterror");
-                    if (rtnerr == "") rtnerr = "fail"; // to return this so a fail is activated.
-
-                    // check we have a waiting for bank status (IPN may have altered status already)
-                    if (orderData.OrderStatus == "020") orderData.PaymentFail();
-
+                    rtnerr = "Mollie Incomplete/cancelled (010)"; // to return this so a fail is activated.
+                    orderData.PaymentFail();
                     return rtnerr;
                 }
+
+                if (orderData.OrderStatus == "020") // check we have a waiting for bank status (Cancel from bank seems to happen even after notified has accepted it as valid??)
+                {
+                    var rtnerr = orderData.PurchaseInfo.GetXmlProperty("genxml/paymenterror");
+                    rtnerr = "Mollie Open (020)"; // to return this so a fail is activated.
+                    orderData.PaymentFail();
+                    return rtnerr;
+                }
+
+                if (orderData.OrderStatus == "030") //Cancelled
+                {
+                    var rtnerr = orderData.PurchaseInfo.GetXmlProperty("genxml/paymenterror");
+                    rtnerr = "Mollie Cancelled (030)"; // to return this so a fail is activated.
+                    orderData.PaymentFail();
+                    return rtnerr;
+                }
+
+                if (orderData.OrderStatus == "050") //Failed
+                {
+                    var rtnerr = orderData.PurchaseInfo.GetXmlProperty("genxml/paymenterror");
+                    rtnerr = "Mollie Failed (050)"; // to return this so a fail is activated.
+                    orderData.PaymentFail();
+                    return rtnerr;
+                }
+
+                if (orderData.OrderStatus == "060") //Failed
+                {
+                    var rtnerr = orderData.PurchaseInfo.GetXmlProperty("genxml/paymenterror");
+                    rtnerr = "Mollie Failed (060)"; // to return this so a fail is activated.
+                    orderData.PaymentFail();
+                    return rtnerr;
+                }
+
             }
             return "";
-        }
+        }        
 
     }
 }

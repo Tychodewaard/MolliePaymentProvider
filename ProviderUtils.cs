@@ -31,12 +31,11 @@ namespace DnnC.Mollie
             var liveApiKey = info.GetXmlProperty("genxml/textbox/liveapikey");
 
 
-            // Check to see if the test api keys is filled in, stops the error with the settings in the backoffice
+            // Check to see if the test api keys is filled in, 
+            // stops the error with the settings in the backoffice
             if (testApiKey != "")
             {
-
                 var apiKey = testApiKey;
-
                 if (!testMode)
                 {
                     apiKey = liveApiKey;
@@ -71,7 +70,6 @@ namespace DnnC.Mollie
                         strPayOptions += "</div></td></tr>";
                     }
 
-
                     strPayOptions += "<tr><td colspan='3'><hr/></td></tr>";
                 }
                 templ = templ.Replace("[PAYMENTMETHODS]", strPayOptions);
@@ -92,14 +90,12 @@ namespace DnnC.Mollie
             return templ;
         }
 
-
         public static NBrightInfo GetProviderSettings(String ctrlkey)
         {
             var info = (NBrightInfo)Utils.GetCache("DnnCMolliePaymentProvider" + PortalSettings.Current.PortalId.ToString(""));
             if (info == null)
             {
                 var modCtrl = new NBrightBuyController();
-
                 info = modCtrl.GetByGuidKey(PortalSettings.Current.PortalId, -1, "DnnCMolliePAYMENT", ctrlkey);
 
                 if (info == null)
@@ -125,26 +121,12 @@ namespace DnnC.Mollie
             rPost.Url = orderData.PurchaseInfo.GetXmlProperty("genxml/posturl");
 
             //Build the re-direct html 
-            var rtnStr = rPost.GetPostHtml("/DesktopModules/NBright/DnnCMollie/Themes/config/img/cic.jpg");
+            var rtnStr = rPost.GetPostHtml("/DesktopModules/NBright/DnnCMollie/Themes/config/img/loading.gif");
             if (settings.GetXmlPropertyBool("genxml/checkbox/debugmode"))
             {
                 File.WriteAllText(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_DnnCMolliepost.html", rtnStr);
             }
             return rtnStr;
-        }
-
-
-        public static string getStatusCode(OrderData oInfo, HttpRequest request)
-        {
-
-            var result = "00";
-
-            var payData = new PayData(oInfo);
-
-            // do code to calculate staus code.
-
-
-            return result;
         }
 
     }

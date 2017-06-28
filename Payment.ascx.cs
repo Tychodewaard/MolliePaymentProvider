@@ -27,9 +27,6 @@ namespace DnnC.Mollie
     /// -----------------------------------------------------------------------------
     public partial class DnnCMolliePayment : NBrightBuyAdminBase
     {
-
-
-
         #region Event Handlers
 
         private String _ctrlkey = "";
